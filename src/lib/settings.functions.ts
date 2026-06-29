@@ -41,12 +41,14 @@ export const updateStoreSettings = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
     if (!existing) {
-      const { error } = await context.supabase.from("store_settings").insert(data);
+      const { error } = await context.supabase
+        .from("store_settings")
+        .insert(data as never);
       if (error) throw new Error(error.message);
     } else {
       const { error } = await context.supabase
         .from("store_settings")
-        .update(data)
+        .update(data as never)
         .eq("id", existing.id);
       if (error) throw new Error(error.message);
     }
