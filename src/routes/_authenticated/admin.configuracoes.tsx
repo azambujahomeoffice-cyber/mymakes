@@ -92,13 +92,18 @@ function Settings() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
+                <Field name="pix_recipient_name" label="Nome do recebedor PIX" defaultValue={settings?.pix_recipient_name ?? ""} />
+                <Field name="pix_document" label="CPF/CNPJ" defaultValue={settings?.pix_document ?? ""} />
                 <Field name="pix_key" label="Chave PIX" defaultValue={settings?.pix_key ?? ""} />
                 <Field name="pix_key_type" label="Tipo da chave (cpf/cnpj/email/telefone/aleatoria)" defaultValue={settings?.pix_key_type ?? ""} />
-                <Field name="mercadopago_public_key" label="Mercado Pago — Public Key" defaultValue={settings?.mercadopago_public_key ?? ""} className="md:col-span-2" />
+                <Field name="pix_bank" label="Banco" defaultValue={settings?.pix_bank ?? ""} />
+                <Field name="pix_payment_message" label="Mensagem de pagamento" defaultValue={settings?.pix_payment_message ?? ""} />
                 <div className="md:col-span-2 rounded-lg border border-dashed border-border/70 p-4 text-sm text-muted-foreground">
-                  O <strong>Access Token</strong> do Mercado Pago é armazenado como <em>secret</em> no Lovable Cloud
-                  (variável <code className="rounded bg-muted px-1">MERCADOPAGO_ACCESS_TOKEN</code>).
-                  Quando estiver pronto para ativar PIX automático, peça para configurar a secret.
+                  <p className="mb-1 font-medium text-foreground">Mercado Pago — PIX automático</p>
+                  As credenciais (<code className="rounded bg-muted px-1">MERCADOPAGO_ACCESS_TOKEN</code> e
+                  {" "}<code className="rounded bg-muted px-1">MERCADOPAGO_PUBLIC_KEY</code>) são armazenadas como
+                  <em> secrets </em> seguras no Lovable Cloud. Quando estiver pronto para ativar o checkout PIX
+                  automático, peça para configurar essas secrets.
                 </div>
               </CardContent>
             </Card>
