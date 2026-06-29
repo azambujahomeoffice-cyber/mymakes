@@ -14,14 +14,15 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const NAV = [
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; soon?: boolean };
+const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/produtos/importar", label: "Importar (IA)", icon: Upload },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart, soon: true },
   { to: "/admin/categorias", label: "Categorias", icon: Tag, soon: true },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
-] as const;
+];
 
 function AdminLayout() {
   const navigate = useNavigate();
