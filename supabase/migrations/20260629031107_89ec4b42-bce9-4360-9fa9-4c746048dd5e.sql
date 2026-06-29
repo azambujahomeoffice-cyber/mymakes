@@ -1,0 +1,9 @@
+
+CREATE POLICY "Public read product images" ON storage.objects FOR SELECT TO anon, authenticated
+  USING (bucket_id IN ('product-images','store-assets'));
+CREATE POLICY "Admins upload product images" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id IN ('product-images','store-assets') AND public.is_admin(auth.uid()));
+CREATE POLICY "Admins update product images" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id IN ('product-images','store-assets') AND public.is_admin(auth.uid()));
+CREATE POLICY "Admins delete product images" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id IN ('product-images','store-assets') AND public.is_admin(auth.uid()));
