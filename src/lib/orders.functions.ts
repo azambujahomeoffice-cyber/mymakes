@@ -37,11 +37,10 @@ export const createOrder = createServerFn({ method: "POST" })
 
     if (!data.items?.length) throw new Error("Carrinho vazio");
 
-    // Load products with real pricing
     const ids = data.items.map((i) => i.productId);
     const { data: products, error: pErr } = await supabaseAdmin
       .from("products")
-      .select("id, name, price, promotional_price, main_image_url, stock_quantity, sku, slug")
+      .select("id, name, price, promotional_price, main_image_url, sku")
       .in("id", ids);
     if (pErr) throw new Error(pErr.message);
     if (!products?.length) throw new Error("Produtos não encontrados");
@@ -53,7 +52,7 @@ export const createOrder = createServerFn({ method: "POST" })
       return {
         product_id: p.id,
         product_name: p.name,
-        product_image: p.main_image_url,
+        image_url: p.main_image_url,
         product_sku: p.sku,
         unit_price: unit,
         quantity: it.quantity,
@@ -62,9 +61,8 @@ export const createOrder = createServerFn({ method: "POST" })
     });
 
     const subtotal = orderItems.reduce((s, i) => s + i.total_price, 0);
-    const shipping = subtotal >= 199 ? 0 : 19.9;
-    const total = subtotal + shipping;
-
+    const shipping_cost = subtotal >= 199 ? 0 : 19.9;
+    const total = subtotal + shipping_cost;
     const orderNumber = `MM${Date.now().toString(36).toUpperCase()}`;
 
     const { data: order, error: oErr } = await supabaseAdmin
@@ -75,15 +73,11 @@ export const createOrder = createServerFn({ method: "POST" })
         customer_email: data.customer.email,
         customer_phone: data.customer.phone,
         customer_document: data.customer.document ?? null,
-        shipping_zip: data.shipping.zip,
-        shipping_street: data.shipping.street,
-        shipping_number: data.shipping.number,
-        shipping_complement: data.shipping.complement ?? null,
-        shipping_neighborhood: data.shipping.neighborhood,
-        shipping_city: data.shipping.city,
-        shipping_state: data.shipping.state,
+        shipping_address: data.shipping,
+        billing_address: data.shipping,
         subtotal,
-        shipping_cost: shipping,
+        shipping_cost,
+        discount_amount: 0,
         total,
         status: "pending",
         payment_status: "pending",
@@ -98,7 +92,7 @@ export const createOrder = createServerFn({ method: "POST" })
     const { error: iErr } = await supabaseAdmin.from("order_items").insert(itemsPayload as never);
     if (iErr) throw new Error(iErr.message);
 
-    return { orderId: order.id, orderNumber: order.order_number, total: order.total };
+    return { orderId: order.id, orderNumber: order.order_number, total: Number(order.total) };
   });
 
 export const getOrderByNumber = createServerFn({ method: "GET" })
@@ -107,7 +101,7 @@ export const getOrderByNumber = createServerFn({ method: "GET" })
     const supabase = publicClient();
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, order_number, status, payment_status, total, subtotal, shipping_cost, customer_name, created_at, order_items(product_name, quantity, unit_price, total_price, product_image)")
+      .select("id, order_number, status, payment_status, total, subtotal, shipping_cost, customer_name, customer_email, shipping_address, created_at, order_items(product_name, quantity, unit_price, total_price, image_url)")
       .eq("order_number", data.orderNumber)
       .maybeSingle();
     if (error) throw new Error(error.message);
