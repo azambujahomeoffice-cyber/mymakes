@@ -72,7 +72,7 @@ function LojaPage() {
             className="mt-6 flex max-w-xl gap-2"
             onSubmit={(e) => {
               e.preventDefault();
-              navigate({ search: (s) => ({ ...s, q: q || undefined }) });
+              navigate({ search: (s: LojaSearch) => ({ ...s, q: q || undefined }) });
             }}
           >
             <div className="relative flex-1">
@@ -97,7 +97,7 @@ function LojaPage() {
             </div>
             <div className="space-y-1">
               <button
-                onClick={() => navigate({ search: (s) => ({ ...s, cat: undefined }) })}
+                onClick={() => navigate({ search: (s: LojaSearch) => ({ ...s, cat: undefined }) })}
                 className={cn(
                   "block w-full rounded-lg px-3 py-2 text-left text-sm transition",
                   !search.cat ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted",
@@ -108,7 +108,7 @@ function LojaPage() {
               {categories.map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => navigate({ search: (s) => ({ ...s, cat: c.slug }) })}
+                  onClick={() => navigate({ search: (s: LojaSearch) => ({ ...s, cat: c.slug }) })}
                   className={cn(
                     "block w-full rounded-lg px-3 py-2 text-left text-sm transition",
                     search.cat === c.slug ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted",
@@ -128,7 +128,7 @@ function LojaPage() {
             </p>
             <select
               value={search.sort ?? "recent"}
-              onChange={(e) => navigate({ search: (s) => ({ ...s, sort: e.target.value as "recent" | "price-asc" | "price-desc" | "name" }) })}
+              onChange={(e) => navigate({ search: (s: LojaSearch) => ({ ...s, sort: e.target.value as LojaSearch["sort"] }) })}
               className="h-9 rounded-full border border-border bg-background px-4 text-sm"
             >
               <option value="recent">Mais recentes</option>
