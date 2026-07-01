@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { listPublicProducts } from "@/lib/products.functions";
 import { listCategories } from "@/lib/categories.functions";
 import { cn } from "@/lib/utils";
-import * as v from "valibot";
+import { z } from "zod";
 
-const Search$ = v.object({
-  q: v.optional(v.string()),
-  cat: v.optional(v.string()),
-  sort: v.optional(v.picklist(["recent", "price-asc", "price-desc", "name"])),
+const searchSchema = z.object({
+  q: z.string().optional(),
+  cat: z.string().optional(),
+  sort: z.enum(["recent", "price-asc", "price-desc", "name"]).optional(),
 });
+type LojaSearch = z.infer<typeof searchSchema>;
 
 export const Route = createFileRoute("/loja")({
   head: () => ({
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/loja")({
       { name: "description", content: "Explore todo o catálogo My Makes: maquiagem, skincare e perfumaria com preços especiais." },
     ],
   }),
-  validateSearch: (s) => v.parse(Search$, s),
+  validateSearch: searchSchema,
   component: LojaPage,
 });
 
