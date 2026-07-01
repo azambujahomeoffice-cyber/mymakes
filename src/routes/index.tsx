@@ -1,14 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, ShoppingBag, ShieldCheck } from "lucide-react";
-import { getPublicSettings } from "@/lib/settings.functions";
+import { Sparkles, Truck, ShieldCheck, CreditCard, ArrowRight } from "lucide-react";
+import { PublicShell } from "@/components/public/PublicShell";
+import { ProductCard } from "@/components/public/ProductCard";
 import { Button } from "@/components/ui/button";
+import { getPublicSettings } from "@/lib/settings.functions";
+import { listFeaturedProducts } from "@/lib/products.functions";
+import { listCategories } from "@/lib/categories.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "My Makes — Maquiagem profissional com elegância" },
-      { name: "description", content: "Marketplace oficial My Makes. Produtos de maquiagem selecionados com curadoria, entrega rápida e atendimento via WhatsApp." },
+      { name: "description", content: "Marketplace My Makes. Maquiagem, skincare e perfumaria com curadoria premium, entrega rápida e pagamento via PIX." },
       { property: "og:title", content: "My Makes — Beleza que destaca você" },
     ],
   }),
@@ -16,117 +20,124 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { data: settings } = useQuery({
-    queryKey: ["public-settings"],
-    queryFn: () => getPublicSettings(),
-  });
+  const { data: settings } = useQuery({ queryKey: ["public-settings"], queryFn: () => getPublicSettings() });
+  const { data: products = [] } = useQuery({ queryKey: ["featured-products"], queryFn: () => listFeaturedProducts() });
+  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: () => listCategories() });
+
   const storeName = settings?.store_name ?? "My Makes";
   const tagline = settings?.tagline ?? "Beleza que destaca a sua melhor versão";
 
   return (
-    <div className="min-h-screen bg-gradient-soft">
-      <header className="border-b border-border/60 bg-background/70 backdrop-blur-md">
-        <div className="container mx-auto flex items-center justify-between gap-4 px-6 py-5">
-          <Link to="/" className="flex items-center gap-3">
-            {settings?.logo_url ? (
-              <img src={settings.logo_url} alt={storeName} className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/20" />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-rose text-primary-foreground shadow-elegant">
-                <Sparkles className="h-5 w-5" />
-              </div>
-            )}
-            <span className="font-display text-2xl tracking-tight text-foreground">{storeName}</span>
-          </Link>
-          <nav className="flex items-center gap-2">
-            <Link to="/auth">
-              <Button variant="ghost" size="sm">Entrar</Button>
-            </Link>
-          </nav>
+    <PublicShell>
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-gradient-soft">
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <div className="absolute -top-40 -left-32 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
+          <div className="absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-gold-300/25 blur-3xl" />
         </div>
-      </header>
-
-      <section className="bg-gradient-hero">
-        <div className="container mx-auto grid gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
-          <div className="flex flex-col justify-center">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-background/70 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> Coleção em breve
+        <div className="container relative mx-auto grid gap-10 px-6 py-16 md:grid-cols-2 md:py-24 items-center">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/60 px-3 py-1 text-xs uppercase tracking-widest text-primary">
+              <Sparkles className="h-3.5 w-3.5" /> Coleção premium
             </span>
-            <h1 className="mt-6 font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-6xl">
+            <h1 className="mt-5 font-display text-4xl leading-tight md:text-6xl">
               {tagline}
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-              Estamos preparando uma vitrine cuidadosamente curada com os melhores produtos
-              de maquiagem. Em poucos cliques você terá acesso ao catálogo completo, com
-              pagamento via PIX e atendimento personalizado.
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
+              Descubra o universo {storeName}. Maquiagem, skincare e fragrâncias selecionadas para você brilhar todos os dias — com pagamento via PIX e frete grátis a partir de R$ 199.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/auth">
-                <Button size="lg" className="shadow-elegant">
-                  Acessar painel admin
+              <Link to="/loja">
+                <Button size="lg" className="rounded-full bg-gradient-rose text-primary-foreground shadow-elegant">
+                  Explorar loja <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>
-              <a href="#fases">
-                <Button size="lg" variant="outline">Ver roadmap</Button>
-              </a>
+              {categories[0] && (
+                <Link to="/categoria/$slug" params={{ slug: categories[0].slug }}>
+                  <Button size="lg" variant="outline" className="rounded-full">Ver {categories[0].name}</Button>
+                </Link>
+              )}
             </div>
           </div>
-
-          <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-rose opacity-20 blur-3xl" />
-            <div className="grid w-full max-w-md grid-cols-2 gap-4">
-              {["Batom", "Base", "Paleta", "Skincare"].map((label, i) => (
-                <div
-                  key={label}
-                  className="group relative aspect-square overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft"
-                  style={{ transform: `translateY(${i % 2 === 0 ? "0" : "1.5rem"})` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-rose opacity-10 transition-opacity group-hover:opacity-25" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="font-display text-xl text-foreground">{label}</p>
-                    <p className="text-xs uppercase tracking-widest text-muted-foreground">Em breve</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="relative">
+            {settings?.banner_url ? (
+              <img src={settings.banner_url} alt="" className="w-full rounded-3xl shadow-elegant" />
+            ) : (
+              <div className="aspect-[4/5] rounded-3xl bg-gradient-rose shadow-elegant grid place-items-center">
+                <Sparkles className="h-20 w-20 text-primary-foreground/40" />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <section id="fases" className="container mx-auto px-6 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary">Roadmap</p>
-          <h2 className="mt-4 font-display text-4xl tracking-tight text-foreground">Construído por fases, sem retrabalho</h2>
-          <p className="mt-4 text-muted-foreground">
-            Toda a arquitetura — banco de dados, APIs e UI — já está pensada para suportar as próximas fases do marketplace.
-          </p>
-        </div>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+      {/* USP */}
+      <section className="border-y border-border/60 bg-background">
+        <div className="container mx-auto grid gap-6 px-6 py-8 md:grid-cols-3">
           {[
-            { icon: ShieldCheck, title: "Fase 1 — Backend + Admin", desc: "Schema completo, autenticação, painel administrativo, importação de produtos via IA e estrutura PIX (Mercado Pago).", active: true },
-            { icon: ShoppingBag, title: "Fase 2 — Loja pública", desc: "Home premium, busca inteligente, página de produto, carrinho e checkout completo." },
-            { icon: Sparkles, title: "Fases 3–6", desc: "Gestão avançada de produtos, dashboards com gráficos, gerador de catálogo PDF e integrações (PagSeguro, Asaas, Melhor Envio, Correios, Analytics, Pixel)." },
-          ].map(({ icon: Icon, title, desc, active }) => (
-            <div
-              key={title}
-              className={`rounded-2xl border p-6 transition ${active ? "border-primary/40 bg-card shadow-elegant" : "border-border/60 bg-card/60"}`}
-            >
-              <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${active ? "bg-gradient-rose text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+            { icon: Truck, title: "Frete grátis", text: "Acima de R$ 199 para todo o Brasil" },
+            { icon: CreditCard, title: "PIX com desconto", text: "Pagamento aprovado na hora" },
+            { icon: ShieldCheck, title: "100% original", text: "Curadoria de marcas confiáveis" },
+          ].map(({ icon: Icon, title, text }) => (
+            <div key={title} className="flex items-center gap-4">
+              <div className="grid h-11 w-11 place-items-center rounded-full bg-primary/10 text-primary">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 font-display text-xl text-foreground">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-              {active && <span className="mt-4 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary">em andamento</span>}
+              <div>
+                <p className="font-medium">{title}</p>
+                <p className="text-sm text-muted-foreground">{text}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <footer className="border-t border-border/60 bg-background/60">
-        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground md:flex-row">
-          <p>© {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
-          <p className="font-display text-base text-foreground">{tagline}</p>
+      {/* CATEGORIES */}
+      {categories.length > 0 && (
+        <section className="container mx-auto px-6 py-14">
+          <div className="mb-6 flex items-end justify-between">
+            <h2 className="font-display text-2xl md:text-3xl">Compre por categoria</h2>
+            <Link to="/loja" className="text-sm text-primary hover:underline">Ver tudo</Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+            {categories.slice(0, 12).map((c) => (
+              <Link
+                key={c.id}
+                to="/categoria/$slug"
+                params={{ slug: c.slug }}
+                className="group rounded-2xl border border-border/60 bg-card p-5 text-center transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-elegant"
+              >
+                <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-gradient-rose text-primary-foreground">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <p className="mt-3 text-sm font-medium group-hover:text-primary">{c.name}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FEATURED PRODUCTS */}
+      <section className="container mx-auto px-6 pb-20">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-primary">Curadoria da semana</p>
+            <h2 className="mt-1 font-display text-2xl md:text-3xl">Destaques My Makes</h2>
+          </div>
+          <Link to="/loja" className="text-sm text-primary hover:underline">Ver todos</Link>
         </div>
-      </footer>
-    </div>
+        {products.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border/70 p-12 text-center text-sm text-muted-foreground">
+            Em breve novos produtos. Aguarde!
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+      </section>
+    </PublicShell>
   );
 }
