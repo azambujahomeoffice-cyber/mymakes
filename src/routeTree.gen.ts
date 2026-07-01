@@ -13,6 +13,7 @@ import { Route as LojaRouteImport } from './routes/loja'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
@@ -36,6 +37,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
+  id: '/categoria/$slug',
+  path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/produtos/importar': typeof AuthenticatedAdminProdutosImportarRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/produtos/importar': typeof AuthenticatedAdminProdutosImportarRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/loja': typeof LojaRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/produtos/importar': typeof AuthenticatedAdminProdutosImportarRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/loja'
     | '/admin'
+    | '/categoria/$slug'
     | '/admin/configuracoes'
     | '/admin/'
     | '/admin/produtos/importar'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/loja'
+    | '/categoria/$slug'
     | '/admin/configuracoes'
     | '/admin'
     | '/admin/produtos/importar'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/loja'
     | '/_authenticated/admin'
+    | '/categoria/$slug'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/produtos/importar'
@@ -136,6 +148,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   LojaRoute: typeof LojaRoute
+  CategoriaSlugRoute: typeof CategoriaSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -166,6 +179,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categoria/$slug': {
+      id: '/categoria/$slug'
+      path: '/categoria/$slug'
+      fullPath: '/categoria/$slug'
+      preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   LojaRoute: LojaRoute,
+  CategoriaSlugRoute: CategoriaSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
