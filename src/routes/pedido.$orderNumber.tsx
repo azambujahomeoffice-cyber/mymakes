@@ -91,7 +91,7 @@ function PedidoPage() {
         <div className="mt-6 rounded-2xl border bg-card p-6">
           <h2 className="font-display text-xl">Itens</h2>
           <ul className="mt-4 space-y-3">
-            {(order.order_items ?? []).map((it, idx: number) => (
+            {(order.order_items ?? []).map((it: { product_name: string; quantity: number; unit_price: number | string; total_price: number | string; image_url?: string | null }, idx: number) => (
               <li key={idx} className="flex gap-3 text-sm">
                 <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
                   {it.image_url && <img src={it.image_url} alt="" className="h-full w-full object-cover" />}
