@@ -34,11 +34,13 @@ function ProdutoPage() {
   const { add, open } = useCart();
   const [qty, setQty] = useState(1);
 
-  const images = [
-    ...(product.main_image_url ? [{ id: "main", image_url: product.main_image_url }] : []),
-    ...((product.product_images ?? [])
-      .filter((i) => i.image_url && i.image_url !== product.main_image_url)
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))),
+  type ImgRow = { id: string; image_url: string; sort_order?: number | null };
+  const extraImgs: ImgRow[] = ((product.product_images ?? []) as ImgRow[])
+    .filter((i) => i.image_url && i.image_url !== product.main_image_url)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const images: ImgRow[] = [
+    ...(product.main_image_url ? [{ id: "main", image_url: product.main_image_url } as ImgRow] : []),
+    ...extraImgs,
   ];
   const [active, setActive] = useState(0);
   const activeImg = images[active]?.image_url;
