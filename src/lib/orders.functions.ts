@@ -98,8 +98,8 @@ export const createOrder = createServerFn({ method: "POST" })
 export const getOrderByNumber = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) => i as { orderNumber: string })
   .handler(async ({ data }) => {
-    const supabase = publicClient();
-    const { data: order, error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select("id, order_number, status, payment_status, total, subtotal, shipping_cost, customer_name, customer_email, shipping_address, created_at, order_items(product_name, quantity, unit_price, total_price, image_url)")
       .eq("order_number", data.orderNumber)
