@@ -35,6 +35,33 @@ export const listPublicProducts = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
+export const getPublicProductBySlug = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => i as { slug: string })
+  .handler(async ({ data }) => {
+    const supabase = publicClient();
+    const { data: p, error } = await supabase
+      .from("products")
+      .select("id, name, slug, short_description, description, price, promotional_price, main_image_url, stock_quantity, is_featured, is_new, is_bestseller, is_on_sale, sku, category_id, categories(name, slug), product_images(id, image_url, sort_order, is_main)")
+      .eq("slug", data.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return p;
+  });
+
+export const listFeaturedProducts = createServerFn({ method: "GET" }).handler(async () => {
+  const supabase = publicClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, name, slug, short_description, price, promotional_price, main_image_url, is_featured, is_new, is_bestseller, stock_quantity, categories(name, slug)")
+    .eq("status", "active")
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(12);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
 /* ============================================================
  * ADMIN: CRUD
  * ============================================================ */
