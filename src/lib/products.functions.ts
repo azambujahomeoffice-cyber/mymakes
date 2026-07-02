@@ -110,7 +110,6 @@ export const upsertProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => i as UpsertInput)
   .handler(async ({ data, context }) => {
-    const slug = slugify(data.name) + "-" + Math.random().toString(36).slice(2, 6);
     const payload = {
       name: data.name,
       short_description: data.short_description ?? null,
@@ -136,6 +135,7 @@ export const upsertProduct = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
       return { id: data.id };
     }
+    const slug = slugify(data.name) + "-" + Math.random().toString(36).slice(2, 6);
     const { data: created, error } = await context.supabase
       .from("products")
       .insert({ ...payload, slug })
@@ -143,6 +143,74 @@ export const upsertProduct = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
     return { id: created.id };
+  });
+
+/* ============================================================
+ * ADMIN: product image gallery
+ * ============================================================ */
+
+export const addProductImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => i as { productId: string; imageUrl: string; isMain?: boolean })
+  .handler(async ({ data, context }) => {
+    const { data: existing } = await context.supabase
+      .from("product_images")
+      .select("id")
+      .eq("product_id", data.productId);
+    const sort = (existing?.length ?? 0);
+    if (data.isMain) {
+      await context.supabase.from("product_images").update({ is_main: false }).eq("product_id", data.productId);
+      await context.supabase.from("products").update({ main_image_url: data.imageUrl }).eq("id", data.productId);
+    }
+    const { error } = await context.supabase.from("product_images").insert({
+      product_id: data.productId,
+      image_url: data.imageUrl,
+      is_main: data.isMain ?? false,
+      sort_order: sort,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteProductImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => i as { id: string })
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("product_images").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const setMainProductImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => i as { productId: string; imageId: string })
+  .handler(async ({ data, context }) => {
+    const { data: img } = await context.supabase
+      .from("product_images")
+      .select("image_url")
+      .eq("id", data.imageId)
+      .maybeSingle();
+    if (!img) throw new Error("Imagem não encontrada");
+    await context.supabase.from("product_images").update({ is_main: false }).eq("product_id", data.productId);
+    await context.supabase.from("product_images").update({ is_main: true }).eq("id", data.imageId);
+    await context.supabase.from("products").update({ main_image_url: img.image_url }).eq("id", data.productId);
+    return { ok: true };
+  });
+
+export const uploadProductImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => i as { fileName: string; base64: string; contentType: string })
+  .handler(async ({ data, context }) => {
+    const buf = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0));
+    const safe = slugify(data.fileName.replace(/\.[^.]+$/, ""));
+    const ext = data.fileName.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `products/${safe}-${Date.now()}.${ext}`;
+    const { error } = await context.supabase.storage
+      .from("product-images")
+      .upload(path, buf, { contentType: data.contentType, upsert: false });
+    if (error) throw new Error(error.message);
+    const url = `${process.env.SUPABASE_URL}/storage/v1/object/public/product-images/${path}`;
+    return { url, path };
   });
 
 export const deleteProduct = createServerFn({ method: "POST" })
