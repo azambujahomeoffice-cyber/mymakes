@@ -1,17 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Package, Sparkles, ShoppingCart, TrendingUp, ArrowUpRight } from "lucide-react";
+import { Package, Sparkles, ShoppingCart, TrendingUp, ArrowUpRight, DollarSign } from "lucide-react";
 import { listAdminProducts } from "@/lib/products.functions";
+import { getAdminMetrics } from "@/lib/orders-admin.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminDashboard,
 });
 
+function brl(n: number) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n); }
+
 function AdminDashboard() {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["admin-products"],
     queryFn: () => listAdminProducts(),
+  });
+  const { data: metrics } = useQuery({
+    queryKey: ["admin-metrics"],
+    queryFn: () => getAdminMetrics(),
   });
 
   const total = products.length;
@@ -20,10 +27,10 @@ function AdminDashboard() {
   const featured = products.filter((p) => p.is_featured).length;
 
   const stats = [
-    { label: "Produtos cadastrados", value: total, icon: Package, hint: `${active} ativos` },
+    { label: "Produtos", value: total, icon: Package, hint: `${active} ativos` },
     { label: "Em destaque", value: featured, icon: Sparkles, hint: "vitrine premium" },
     { label: "Estoque baixo", value: lowStock, icon: TrendingUp, hint: "< 5 unidades" },
-    { label: "Pedidos", value: 0, icon: ShoppingCart, hint: "fase 2" },
+    { label: "Pedidos", value: metrics?.orderCount ?? 0, icon: ShoppingCart, hint: `${brl(metrics?.totalRevenue ?? 0)} faturado` },
   ];
 
   return (
