@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "My Makes" },
+      { name: "description", content: "My Makes Beauty Hub is a professional e-commerce marketplace for makeup, cosmetics, and beauty accessories." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "My Makes" },
+      { property: "og:description", content: "My Makes Beauty Hub is a professional e-commerce marketplace for makeup, cosmetics, and beauty accessories." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "My Makes" },
+      { name: "twitter:description", content: "My Makes Beauty Hub is a professional e-commerce marketplace for makeup, cosmetics, and beauty accessories." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e6b2a841-eac3-4b64-b704-36c39a31efc2/id-preview-63b88bbe--4acb7df7-f67c-4fef-89e0-900e775f94a3.lovable.app-1782951525309.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e6b2a841-eac3-4b64-b704-36c39a31efc2/id-preview-63b88bbe--4acb7df7-f67c-4fef-89e0-900e775f94a3.lovable.app-1782951525309.png" },
     ],
     links: [
       {
