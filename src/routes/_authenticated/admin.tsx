@@ -14,13 +14,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; soon?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/produtos/importar", label: "Importar (IA)", icon: Upload },
-  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart, soon: true },
-  { to: "/admin/categorias", label: "Categorias", icon: Tag, soon: true },
+  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
+  { to: "/admin/categorias", label: "Categorias", icon: Tag },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
@@ -64,21 +64,16 @@ function AdminLayout() {
               return (
                 <Link
                   key={item.to}
-                  to={item.soon ? "/admin" : item.to}
+                  to={item.to}
                   className={cn(
-                    "group flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition",
+                    "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition",
                     active
                       ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-soft"
                       : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
-                    item.soon && "opacity-60 cursor-not-allowed",
                   )}
-                  onClick={(e) => item.soon && e.preventDefault()}
                 >
-                  <span className="flex items-center gap-3">
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </span>
-                  {item.soon && <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">em breve</span>}
+                  <Icon className="h-4 w-4" />
+                  {item.label}
                 </Link>
               );
             })}
