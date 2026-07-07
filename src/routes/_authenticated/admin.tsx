@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import {
-  LayoutDashboard, Package, Upload, Settings, LogOut, Sparkles, ShoppingCart, Tag,
+  LayoutDashboard, Package, Upload, Settings, LogOut, Sparkles, ShoppingCart, Tag, FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyRole } from "@/lib/admin.functions";
@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { to: "/admin/produtos/importar", label: "Importar (IA)", icon: Upload },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
   { to: "/admin/categorias", label: "Categorias", icon: Tag },
+  { to: "/admin/catalogo", label: "Catálogo PDF", icon: FileText },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
