@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import {
-  LayoutDashboard, Package, Upload, Settings, LogOut, Sparkles, ShoppingCart, Tag, FileText,
+  LayoutDashboard, Package, Upload, Settings, LogOut, Sparkles, ShoppingCart, Tag, FileText, Activity,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyRole } from "@/lib/admin.functions";
@@ -17,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/auditoria", label: "Auditoria", icon: Activity },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/produtos/importar", label: "Importar (IA)", icon: Upload },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingCart },
