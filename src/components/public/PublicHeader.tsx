@@ -13,8 +13,16 @@ import { cn } from "@/lib/utils";
 export function PublicHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [q, setQ] = useState("");
+  const navigate = useNavigate();
   const { items, toggle } = useCart();
   const { count } = cartTotals(items);
+
+  const submitSearch = (close?: () => void) => (e: React.FormEvent) => {
+    e.preventDefault();
+    close?.();
+    navigate({ to: "/loja", search: q ? { q } : {} });
+  };
+
 
   const { data: settings } = useQuery({ queryKey: ["public-settings"], queryFn: () => getPublicSettings() });
   const { data: cats } = useQuery({ queryKey: ["categories"], queryFn: () => listCategories() });
