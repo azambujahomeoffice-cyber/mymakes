@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as LojaRouteImport } from './routes/loja'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
@@ -31,6 +33,16 @@ import { Route as AuthenticatedAdminProdutosImportarRouteImport } from './routes
 import { Route as AuthenticatedAdminProdutosIdRouteImport } from './routes/_authenticated/admin.produtos.$id'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated/admin.pedidos.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LojaRoute = LojaRouteImport.update({
   id: '/loja',
   path: '/loja',
@@ -152,6 +164,8 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/loja': typeof LojaRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/pedido/$orderNumber': typeof PedidoOrderNumberRoute
@@ -174,6 +188,8 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/loja': typeof LojaRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/pedido/$orderNumber': typeof PedidoOrderNumberRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -197,6 +213,8 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/loja': typeof LojaRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/pedido/$orderNumber': typeof PedidoOrderNumberRoute
@@ -221,6 +239,8 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/loja'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/admin'
     | '/categoria/$slug'
     | '/pedido/$orderNumber'
@@ -243,6 +263,8 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/loja'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/categoria/$slug'
     | '/pedido/$orderNumber'
     | '/produto/$slug'
@@ -265,6 +287,8 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/loja'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/pedido/$orderNumber'
@@ -289,6 +313,8 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   CheckoutRoute: typeof CheckoutRoute
   LojaRoute: typeof LojaRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   PedidoOrderNumberRoute: typeof PedidoOrderNumberRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
@@ -296,6 +322,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/loja': {
       id: '/loja'
       path: '/loja'
@@ -497,6 +537,8 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   CheckoutRoute: CheckoutRoute,
   LojaRoute: LojaRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   PedidoOrderNumberRoute: PedidoOrderNumberRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
