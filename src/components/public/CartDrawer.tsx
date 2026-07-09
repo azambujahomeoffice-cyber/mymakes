@@ -61,13 +61,14 @@ export function CartDrawer() {
                       <span className="mt-1 text-sm font-semibold text-primary">{brl(it.price)}</span>
                       <div className="mt-auto flex items-center justify-between">
                         <div className="inline-flex items-center rounded-full border">
-                          <button className="p-1.5" onClick={() => setQty(it.productId, it.quantity - 1)}>
-                            <Minus className="h-3.5 w-3.5" />
+                          <button type="button" aria-label="Diminuir quantidade" className="p-1.5" onClick={() => setQty(it.productId, it.quantity - 1)}>
+                            <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
-                          <span className="min-w-8 text-center text-sm">{it.quantity}</span>
-                          <button className="p-1.5" onClick={() => setQty(it.productId, it.quantity + 1)}>
-                            <Plus className="h-3.5 w-3.5" />
+                          <span className="min-w-8 text-center text-sm" aria-live="polite">{it.quantity}</span>
+                          <button type="button" aria-label="Aumentar quantidade" className="p-1.5" onClick={() => setQty(it.productId, it.quantity + 1)}>
+                            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
+
                         </div>
                         <button
                           onClick={() => remove(it.productId)}

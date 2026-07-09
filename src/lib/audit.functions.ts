@@ -164,10 +164,14 @@ const TECH_AUDIT: ChecklistItem[] = [
   { key: "structure", label: "Estrutura de pastas coesa", status: "done" },
   { key: "dead-code", label: "Ausência de código morto", status: "done" },
   { key: "duplication", label: "Baixa duplicação de código", status: "done" },
-  { key: "error-boundaries", label: "errorComponent/notFoundComponent em rotas com loader", status: "partial", note: "Cobertura parcial" },
+  { key: "error-boundaries", label: "errorComponent/notFoundComponent em rotas com loader", status: "partial", note: "Root cobre; rotas com loader ainda podem herdar" },
+  { key: "auth-gate", label: "_authenticated com ssr:false + getUser()", status: "done", note: "Corrige loop de redirect no hard-refresh" },
+  { key: "auth-listener", label: "onAuthStateChange no root (invalidate cache)", status: "done" },
+  { key: "spa-nav", label: "Navegação SPA (sem window.location)", status: "done", note: "Busca do header usa useNavigate" },
   { key: "logs", label: "Observabilidade / logs estruturados", status: "todo" },
   { key: "tests", label: "Testes automatizados", status: "todo" },
 ];
+
 
 const FUNC_AUDIT: ChecklistItem[] = [
   { key: "home", label: "Home", status: "done" },
@@ -195,7 +199,10 @@ const UX_AUDIT: ChecklistItem[] = [
   { key: "a11y", label: "Acessibilidade (labels/ARIA)", status: "partial" },
   { key: "consistency", label: "Consistência visual (design tokens)", status: "done" },
   { key: "perf", label: "Performance / lazy images", status: "partial" },
+  { key: "a11y-cart", label: "Botões +/- do carrinho com aria-label", status: "done" },
+  { key: "seo-sitemap", label: "sitemap.xml + robots.txt", status: "done" },
 ];
+
 
 const SEC_AUDIT: ChecklistItem[] = [
   { key: "auth", label: "Autenticação Supabase", status: "done" },
@@ -261,7 +268,9 @@ const CHANGELOG = [
   { date: "2026-07-02", type: "feature", description: "Fase 4 — Geração de catálogo PDF com pdf-lib." },
   { date: "2026-07-08", type: "fix", description: "Auth email auto-confirm + auto-promoção do primeiro admin." },
   { date: "2026-07-08", type: "feature", description: "Fase 0 — Central de Auditoria do Projeto." },
+  { date: "2026-07-09", type: "refactor", description: "Auditoria evolutiva: gate _authenticated com ssr:false + getUser, onAuthStateChange no root, busca do header via useNavigate, robots.txt + sitemap.xml dinâmicos, a11y do carrinho." },
 ];
+
 
 function phaseProgress(items: ChecklistItem[]): number {
   if (items.length === 0) return 0;

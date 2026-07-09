@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+
 import { ShoppingBag, Search, Sparkles, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,16 @@ import { cn } from "@/lib/utils";
 export function PublicHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [q, setQ] = useState("");
+  const navigate = useNavigate();
   const { items, toggle } = useCart();
   const { count } = cartTotals(items);
+
+  const submitSearch = (close?: () => void) => (e: React.FormEvent) => {
+    e.preventDefault();
+    close?.();
+    navigate({ to: "/loja", search: q ? { q } : {} });
+  };
+
 
   const { data: settings } = useQuery({ queryKey: ["public-settings"], queryFn: () => getPublicSettings() });
   const { data: cats } = useQuery({ queryKey: ["categories"], queryFn: () => listCategories() });
@@ -43,25 +52,19 @@ export function PublicHeader() {
           <span className="font-display text-xl tracking-tight md:text-2xl">{storeName}</span>
         </Link>
 
-        <form
-          className="hidden md:flex flex-1 max-w-xl mx-auto"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const params = new URLSearchParams();
-            if (q) params.set("q", q);
-            window.location.href = `/loja?${params.toString()}`;
-          }}
-        >
+        <form className="hidden md:flex flex-1 max-w-xl mx-auto" onSubmit={submitSearch()} role="search">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Buscar batom, base, paleta, skincare..."
+              aria-label="Buscar produtos"
               className="pl-9 h-11 rounded-full border-border/60 bg-muted/40 focus-visible:ring-primary/30"
             />
           </div>
         </form>
+
 
         <div className="ml-auto flex items-center gap-1">
           <Link to="/loja" className="hidden md:inline-flex">
@@ -97,16 +100,10 @@ export function PublicHeader() {
       {/* Mobile menu */}
       <div className={cn("md:hidden overflow-hidden border-t border-border/60 transition-all", mobileOpen ? "max-h-[70vh]" : "max-h-0")}>
         <div className="p-4 space-y-3">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const params = new URLSearchParams();
-              if (q) params.set("q", q);
-              window.location.href = `/loja?${params.toString()}`;
-            }}
-          >
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar produtos..." className="h-11" />
+          <form onSubmit={submitSearch(() => setMobileOpen(false))} role="search">
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar produtos..." aria-label="Buscar produtos" className="h-11" />
           </form>
+
           <Link to="/loja" onClick={() => setMobileOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
             Todos os produtos
           </Link>
