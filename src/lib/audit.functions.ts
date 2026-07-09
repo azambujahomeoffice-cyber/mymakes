@@ -268,7 +268,9 @@ const CHANGELOG = [
   { date: "2026-07-02", type: "feature", description: "Fase 4 — Geração de catálogo PDF com pdf-lib." },
   { date: "2026-07-08", type: "fix", description: "Auth email auto-confirm + auto-promoção do primeiro admin." },
   { date: "2026-07-08", type: "feature", description: "Fase 0 — Central de Auditoria do Projeto." },
+  { date: "2026-07-09", type: "refactor", description: "Auditoria evolutiva: gate _authenticated com ssr:false + getUser, onAuthStateChange no root, busca do header via useNavigate, robots.txt + sitemap.xml dinâmicos, a11y do carrinho." },
 ];
+
 
 function phaseProgress(items: ChecklistItem[]): number {
   if (items.length === 0) return 0;
